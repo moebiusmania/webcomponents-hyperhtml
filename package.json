@@ -1,0 +1,21 @@
+{
+  "name": "webcomponents-hyperhtml",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:moebiusmania/webcomponents-hyperhtml.git",
+  "author": "Salvatore Laisa <moebiusmania@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "concurrently -k \"http-server ./src -s -p 8081\" \"webpack -w\""
+  },
+  "devDependencies": {
+    "concurrently": "^3.4.0",
+    "http-server": "^0.10.0",
+    "uglifyjs-webpack-plugin": "^0.4.3",
+    "webpack": "^2.5.1",
+    "webpack-notifier": "^1.5.0"
+  },
+  "dependencies": {
+    "hyperhtml": "^0.10.3"
+  }
+}
