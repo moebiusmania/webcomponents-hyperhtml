@@ -634,9 +634,11 @@ try { module.exports = hyperHTML; } catch(o_O) {}
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_tick_element__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_repeat_data__ = __webpack_require__(5);
 
 
 // import './other/tick-example';
+
 
 
 
@@ -693,6 +695,74 @@ customElements.define('tick-element', TickElement);
 
 module.exports = __webpack_require__(1);
 
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_hyperhtml__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_hyperhtml__);
+
+
+
+
+class RepeatData extends HTMLElement {
+
+  constructor(){
+    super();
+    this.SD = this.attachShadow({mode: 'open'});
+    this.base = 'http://jsonplaceholder.typicode.com'
+    this.data = [];
+  }
+
+  static get observedAttributes() {
+    return ['source'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log(name + ':' + newValue);
+  }
+
+  connectedCallback(){
+    this.SD.innerHTML = `<style>
+      :host{
+        display: block;
+        padding: 10px;
+        border: 1px dashed #ccc;
+      }
+    </style>`;
+    console.log('<repeat-data> added to the DOM');
+    this.root = __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.bind(this.SD)
+
+    this.posts();
+  }
+
+  _renderData(data){
+    console.log(data);
+      this.data = data;
+      this.root`
+        <ul>${
+          this.data.map(e => `<li>${e.body}</li>`)
+        }</ul>
+      `
+  }
+
+  posts(){
+    fetch(`${this.base}/posts`).then( r => r.json() )
+      .then(this._renderData.bind(this));
+  }
+
+  comments(){
+    fetch(`${this.base}/comments`).then( r => r.json() )
+      .then(this._renderData.bind(this));
+  }
+
+
+}
+
+// Registra il nuovo elemento
+customElements.define('repeat-data', RepeatData);
 
 /***/ })
 /******/ ]);
