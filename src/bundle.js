@@ -655,36 +655,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-const config = { attributes: true };
-const observer = new MutationObserver(function(mutations) {
-  mutations.forEach(function(mutation) {
-    console.log(mutation.type);
-  });    
-});
-
 class IfData extends HTMLElement {
 
   constructor(){
     super();
     this.SD = this.attachShadow({mode: 'open'});
     this.condition = false;
-  }
+    this._props = {
+      condition: false
+    };
 
- /* get condition(){
-    return this.gasAttribute('condition');
-  }
-
-  set condition(val){
-      console.log(val);
-    const bool = val == 'true';
-    if(bool){
-      this.condition = val == 'true';
-      this._render();
-      this.setAttribute('condition', true);
-    } else {
-      this.removeAttribute('condition');
+    this.__update = {
+      set: (target,name,val) => {
+        console.log(target,name,val)
+        this._props = Object.assign({}, this.props, {[name]: val});
+        // this._props[name] = val;
+        this._render(this.render, this._props);
+      }
     }
-  }*/
+
+    this.props = new Proxy(this._props, this.__update);
+  }
 
   static get observedAttributes() {
     return ['condition'];
@@ -692,8 +683,7 @@ class IfData extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     console.log(name + ':' + newValue);
-    /*this.condition = newValue == 'true';
-    this._render();*/
+    this.props[name] = newValue;
   }
 
   connectedCallback(){
@@ -705,24 +695,27 @@ class IfData extends HTMLElement {
       }
     </style>`;
     console.log('<if-data> added to the DOM');
-    observer.observe(this, config);
     this.render = __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.bind(this.SD);
-    this._render();
+
+    if(this.hasAttribute('condition')){
+      this.props.condition = this.getAttribute('condition');
+    }
+    this._render(this.render, this._props);
   }
 
-  _render(){
-    this.render ? this.render`
+  _render(render, state){
+    render ? render`
       <div>${
-        __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.wire()`<button disabled="${this.condition}">Provami</button>`
+        __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.wire()`<button disabled="${state.condition}">Provami</button>`
       }</div>
     ` : null;
-    console.log(this.root,this.render,this.condition);
+    console.log('RENDER',render, state);
   }
 
-  update(newValue = true){
-    this.condition = newValue;
-    this._render();
-  }
+  // update(newValue = true){
+  //   this._props.condition = newValue;
+  //   this._render(hyperHTML.bind(this.SD), Object.assign({},this._props));
+  // }
 
 
 }
