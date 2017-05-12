@@ -3,3 +3,4 @@
 // import './other/tick-example';
 import './components/tick-element';
 import './components/repeat-data';
+import './components/if-data';

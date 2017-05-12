@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -633,11 +633,13 @@ try { module.exports = hyperHTML; } catch(o_O) {}
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_tick_element__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_repeat_data__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_tick_element__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_repeat_data__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_if_data__ = __webpack_require__(2);
 
 
 // import './other/tick-example';
+
 
 
 
@@ -653,11 +655,45 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-class TickElement extends HTMLElement {
+const config = { attributes: true };
+const observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    console.log(mutation.type);
+  });    
+});
+
+class IfData extends HTMLElement {
 
   constructor(){
     super();
     this.SD = this.attachShadow({mode: 'open'});
+    this.condition = false;
+  }
+
+ /* get condition(){
+    return this.gasAttribute('condition');
+  }
+
+  set condition(val){
+      console.log(val);
+    const bool = val == 'true';
+    if(bool){
+      this.condition = val == 'true';
+      this._render();
+      this.setAttribute('condition', true);
+    } else {
+      this.removeAttribute('condition');
+    }
+  }*/
+
+  static get observedAttributes() {
+    return ['condition'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log(name + ':' + newValue);
+    /*this.condition = newValue == 'true';
+    this._render();*/
   }
 
   connectedCallback(){
@@ -668,36 +704,33 @@ class TickElement extends HTMLElement {
         border: 1px dashed #ccc;
       }
     </style>`;
-    console.log('<tick-element> added to the DOM');
-    setInterval(this._tick, 1000,
-      __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.bind(this.SD)
-    );
+    console.log('<if-data> added to the DOM');
+    observer.observe(this, config);
+    this.render = __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.bind(this.SD);
+    this._render();
   }
 
-  _tick(render) {
-    render `
-      <div>
-        <h1>Hello, world!</h1>
-        <h2>It is ${new Date().toLocaleTimeString()}.</h2>
-      </div>
-    `;
+  _render(){
+    this.render ? this.render`
+      <div>${
+        __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.wire()`<button disabled="${this.condition}">Provami</button>`
+      }</div>
+    ` : null;
+    console.log(this.root,this.render,this.condition);
   }
+
+  update(newValue = true){
+    this.condition = newValue;
+    this._render();
+  }
+
 
 }
 
-// Registra il nuovo elemento
-customElements.define('tick-element', TickElement);
+customElements.define('if-data', IfData);
 
 /***/ }),
-/* 3 */,
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(1);
-
-
-/***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -763,6 +796,59 @@ class RepeatData extends HTMLElement {
 
 // Registra il nuovo elemento
 customElements.define('repeat-data', RepeatData);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_hyperhtml__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_hyperhtml__);
+
+
+
+
+class TickElement extends HTMLElement {
+
+  constructor(){
+    super();
+    this.SD = this.attachShadow({mode: 'open'});
+  }
+
+  connectedCallback(){
+    this.SD.innerHTML = `<style>
+      :host{
+        display: block;
+        padding: 10px;
+        border: 1px dashed #ccc;
+      }
+    </style>`;
+    console.log('<tick-element> added to the DOM');
+    setInterval(this._tick, 1000,
+      __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.bind(this.SD)
+    );
+  }
+
+  _tick(render) {
+    render `
+      <div>
+        <h1>Hello, world!</h1>
+        <h2>It is ${new Date().toLocaleTimeString()}.</h2>
+      </div>
+    `;
+  }
+
+}
+
+// Registra il nuovo elemento
+customElements.define('tick-element', TickElement);
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(1);
+
 
 /***/ })
 /******/ ]);
