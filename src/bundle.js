@@ -659,18 +659,19 @@ class IfData extends HTMLElement {
 
   constructor(){
     super();
-    this.SD = this.attachShadow({mode: 'open'});
-    this.condition = false;
+    this.html = __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.bind(
+      this.attachShadow({mode: 'open'})
+    );
     this._props = {
       condition: false
     };
 
     this.__update = {
       set: (target,name,val) => {
-        console.log(target,name,val)
+        console.log(target,name,val);
         this._props = Object.assign({}, this.props, {[name]: val});
-        // this._props[name] = val;
-        this._render(this.render, this._props);
+        this.render(this._props);
+        return true;
       }
     }
 
@@ -683,40 +684,31 @@ class IfData extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     console.log(name + ':' + newValue);
+    newValue = newValue === null ? false : true;
     this.props[name] = newValue;
   }
 
   connectedCallback(){
-    this.SD.innerHTML = `<style>
+    if(this.hasAttribute('condition')){
+      this.props.condition = this.getAttribute('condition');
+    }
+    this.render(this._props);
+    console.log('<if-data> added to the DOM');
+  }
+
+  render(state){
+    this.html`<style>
       :host{
         display: block;
         padding: 10px;
         border: 1px dashed #ccc;
       }
-    </style>`;
-    console.log('<if-data> added to the DOM');
-    this.render = __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.bind(this.SD);
-
-    if(this.hasAttribute('condition')){
-      this.props.condition = this.getAttribute('condition');
-    }
-    this._render(this.render, this._props);
+    </style>
+    <div>
+        <button disabled="${state.condition}">Provami</button>
+    </div>`; 
+    console.log('RENDER', state);
   }
-
-  _render(render, state){
-    render ? render`
-      <div>${
-        __WEBPACK_IMPORTED_MODULE_0_hyperhtml___default.a.wire()`<button disabled="${state.condition}">Provami</button>`
-      }</div>
-    ` : null;
-    console.log('RENDER',render, state);
-  }
-
-  // update(newValue = true){
-  //   this._props.condition = newValue;
-  //   this._render(hyperHTML.bind(this.SD), Object.assign({},this._props));
-  // }
-
 
 }
 
